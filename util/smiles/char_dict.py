@@ -103,7 +103,7 @@ def load_char_idx(dataset):
             "\\": 45,
             "E": 46,
         }
-    elif dataset in ["zinc_graphaf", "zinc_jtvae"]:
+    elif dataset == "zinc":
         char_idx = {
             PAD: 0,
             BEGIN: 1,
@@ -147,56 +147,14 @@ def load_char_idx(dataset):
             "/": 38,
             "\\": 39,
         }
-    elif dataset == "zinc_daga":
-        char_idx = {
-            PAD: 0,
-            BEGIN: 1,
-            END: 2,
-            "#": 3,
-            "%": 36,
-            "(": 4,
-            ")": 5,
-            "+": 6,
-            "-": 7,
-            "0": 8,
-            "1": 9,
-            "2": 10,
-            "3": 11,
-            "4": 12,
-            "5": 13,
-            "6": 14,
-            "7": 15,
-            "8": 16,
-            "9": 17,
-            "=": 18,
-            "C": 19,
-            "F": 20,
-            "H": 21,
-            "I": 22,
-            "N": 23,
-            "O": 24,
-            "P": 25,
-            "S": 26,
-            "X": 27,
-            "Y": 28,
-            "[": 29,
-            "]": 30,
-            "c": 31,
-            "n": 32,
-            "o": 33,
-            "p": 34,
-            "s": 35,
-        }
 
     return char_idx
 
 def load_encode_dict(dataset):
     if dataset == "guacamol":
         encode_dict = {"Br": "Y", "Cl": "X", "Si": "A", "Se": "Z", "@@": "R", "se": "E"}
-    elif dataset in ["zinc_graphaf", "zinc_jtvae"]:
+    elif dataset == "zinc":
         encode_dict = {"Br": "Y", "Cl": "X", "Si": "A", "@@": "R"}
-    elif dataset == "zinc_daga":
-        encode_dict = {"Br": "Y", "Cl": "X", "Si": "A"}
 
     return encode_dict
 

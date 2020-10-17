@@ -1,4 +1,4 @@
-# deep-molecular-optimization
+# genetic_expert_guided_learning
 
 This is an official implementation of our paper Guiding Deep Molecular Optimization with Genetic Exploration (https://arxiv.org/pdf/2007.04897.pdf). Our code is largely inspired by GuacaMol baselines (https://github.com/BenevolentAI/guacamol_baselines).
 
@@ -61,7 +61,6 @@ We use the neural apprentic policy pretrained on the GuacaMol dataset, provided 
 
 ```
 wget https://github.com/BenevolentAI/guacamol_baselines/blob/master/smiles_lstm_hc/pretrained_model/model_final_0.473.pt ./resource/checkpoint/guacamol/generator_weight.pt
-
 wget https://github.com/BenevolentAI/guacamol_baselines/blob/master/smiles_lstm_hc/pretrained_model/model_final_0.473.pt ./resource/checkpoint/guacamol/generator_config.json
 ```
 

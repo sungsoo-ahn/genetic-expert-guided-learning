@@ -83,26 +83,14 @@ class ThresholdedImprovementScoringFunction(MoleculewiseScoringFunction):
 
         return score
 
-LOGP_STATS = {
-    "zinc_jtvae": {"mean": 2.4570965532649507, "std": 1.4339810636722639},
-    "zinc_graphaf": {"mean": 2.4570965532649507, "std": 1.4339810636722639},
-    "zinc_daga": {"mean": 2.472846466358066, "std": 1.4157615972733433},
-    }
-SASCORE_STATS = {
-    "zinc_jtvae": {"mean": 3.0508333383104556, "std": 0.8327034846660627},
-    "zinc_graphaf": {"mean": 3.0508333383104556, "std": 0.8327034846660627},
-    "zinc_daga": {"mean": 3.047007542119863, "std": 0.8306090898312188},
-    }
-ATOMRING_CYCLESCORE_STATS = {
-    "zinc_jtvae": {"mean": 0.03805126763956079, "std": 0.22377819597468795},
-    "zinc_graphaf": {"mean": 0.03805126763956079, "std": 0.22377819597468795},
-    "zinc_daga": {"mean": 0.03813195711816676, "std": 0.22403187538594987},
-}
-CYCLEBASIS_CYCLESCORE_STATS = {
-    "zinc_jtvae": {"mean": 0.048152237188108474, "std": 0.2860582871837183},
-    "zinc_graphaf": {"mean": 0.048152237188108474, "std": 0.2860582871837183},
-    "zinc_daga": {"mean": 0.04915457039606473, "std": 0.29424915839433313}
-}
+LOGP_MEAN = 2.4570965532649507
+LOGP_STD = 1.4339810636722639
+SASCORE_MEAN = 3.0508333383104556
+SASCORE_STD = 0.8327034846660627
+ATOMRING_CYCLESCORE_MEAN = 0.03805126763956079
+ATOMRING_CYCLESCORE_STD = 0.22377819597468795
+CYCLEBASIS_CYCLESCORE_MEAN = 0.048152237188108474
+CYCLEBASIS_CYCLESCORE_STD = 0.2860582871837183
 
 def _penalized_logp_atomrings(mol: Mol, dataset: str):
     log_p = Descriptors.MolLogP(mol)
@@ -112,9 +100,9 @@ def _penalized_logp_atomrings(mol: Mol, dataset: str):
     largest_ring_size = max([len(j) for j in cycle_list]) if cycle_list else 0
     cycle_score = max(largest_ring_size - 6, 0)
 
-    log_p = (log_p - LOGP_STATS[dataset]["mean"]) / LOGP_STATS[dataset]["std"]
-    sa_score = (sa_score - SASCORE_STATS[dataset]["mean"]) / SASCORE_STATS[dataset]["std"]
-    cycle_score = (cycle_score - ATOMRING_CYCLESCORE_STATS[dataset]["mean"]) / ATOMRING_CYCLESCORE_STATS[dataset]["std"]
+    log_p = (log_p - LOGP_MEAN) / LOGP_STD
+    sa_score = (sa_score - SASCORE_MEAN) / SASCORE_STD
+    cycle_score = (cycle_score - ATOMRING_CYCLESCORE_MEAN) / ATOMRING_CYCLESCORE_STD
 
     return log_p - sa_score - cycle_score
 
@@ -126,9 +114,9 @@ def _penalized_logp_cyclebasis(mol: Mol, dataset: str):
     largest_ring_size = max([len(j) for j in cycle_list]) if cycle_list else 0
     cycle_score = max(largest_ring_size - 6, 0)
 
-    log_p = (log_p - LOGP_STATS[dataset]["mean"]) / LOGP_STATS[dataset]["std"]
-    sa_score = (sa_score - SASCORE_STATS[dataset]["mean"]) / SASCORE_STATS[dataset]["std"]
-    cycle_score = (cycle_score - CYCLEBASIS_CYCLESCORE_STATS[dataset]["mean"]) / CYCLEBASIS_CYCLESCORE_STATS[dataset]["std"]
+    log_p = (log_p - LOGP_MEAN) / LOGP_STD
+    sa_score = (sa_score - SASCORE_MEAN) / SASCORE_STD
+    cycle_score = (cycle_score - CYCLEBASIS_CYCLESCORE_MEAN) / CYCLEBASIS_CYCLESCORE_STD
 
     return log_p - sa_score - cycle_score
 
