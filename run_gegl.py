@@ -42,9 +42,8 @@ if __name__ == "__main__":
     parser.add_argument("--record_filtered", action="store_true")
     args = parser.parse_args()
 
-    # Initialize random seed and prepare CUDA device
+    # Prepare CUDA device
     device = torch.device(0)
-    random.seed(0)
 
     # Initialize neptune
     neptune.init(project_qualified_name="sungsoo.ahn/deep-molecular-optimization")

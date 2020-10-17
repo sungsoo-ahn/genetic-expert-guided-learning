@@ -240,6 +240,6 @@ def load_benchmark(benchmark_id):
     elif benchmark_id in [25]:
         scoring_num_list = [100]
     elif benchmark_id in [0, 1, 2, 27, 28]:
-        scoring_num_list = [1]
+        scoring_num_list = [100]
 
     return benchmark, scoring_num_list
