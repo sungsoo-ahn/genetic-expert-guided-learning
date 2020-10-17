@@ -116,12 +116,3 @@ dmypy.json
 # Pyre type checker
 .pyre/
 *.png
-
-experiments/
-log/
-model/
-summary/
-result/
-test/
-KaMIS
-output/
