@@ -17,6 +17,8 @@ from util.storage.recorder import Recorder
 from util.chemistry.benchmarks import (
     similarity_constrained_penalized_logp_atomrings,
     similarity_constrained_penalized_logp_cyclebasis,
+    penalized_logp_atomrings,
+    penalized_logp_cyclebasis,
 )
 from util.smiles.char_dict import SmilesCharDictionary
 from util.smiles.dataset import load_dataset
@@ -31,11 +33,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("--smi_id_min", type=int, default=0)
     parser.add_argument("--smi_id_max", type=int, default=800)
-    parser.add_argument("--dataset", type=str, default="zinc_daga")
-    parser.add_argument("--dataset_path", type=str, default="./resource/data/zinc_daga/logp_800.txt")
+    parser.add_argument("--dataset", type=str, default="zinc")
+    parser.add_argument("--dataset_path", type=str, default="./resource/data/zinc/logp_800.txt")
     parser.add_argument("--max_smiles_length", type=int, default=120)
     parser.add_argument("--similarity_threshold", type=float, default=0.4)
-    parser.add_argument("--apprentice_load_dir", type=str, default="./resource/checkpoint/zinc_daga")
+    parser.add_argument("--apprentice_load_dir", type=str, default="./resource/checkpoint/zinc")
     parser.add_argument("--learning_rate", type=float, default=1e-3)
     parser.add_argument("--sample_batch_size", type=int, default=512)
     parser.add_argument("--optimize_batch_size", type=int, default=256)
@@ -66,14 +68,17 @@ if __name__ == "__main__":
 
     if args.use_atomrings:
         similarity_constrained_penalized_logp = similarity_constrained_penalized_logp_atomrings
+        penalized_logp_score_func = penalized_logp_atomrings().wrapped_objective.score
     else:
         similarity_constrained_penalized_logp = similarity_constrained_penalized_logp_cyclebasis
+        penalized_logp_score_func = penalized_logp_cyclebasis().wrapped_objective.score
+
 
     for smi_id in range(args.smi_id_min, args.smi_id_max):
         print(f"ID: {smi_id}")
         reference_smi = dataset[smi_id]
         benchmark = similarity_constrained_penalized_logp(
-            smiles=reference_smi, name=str(smi_id), threshold=args.similarity_threshold, dataset=args.dataset
+            smiles=reference_smi, name=str(smi_id), threshold=args.similarity_threshold
         )
         scoring_num_list = [1]
 
@@ -118,8 +123,13 @@ if __name__ == "__main__":
             num_jobs=args.num_jobs,
         )
         result = benchmark.assess_model(exp_generator)
+        optimized_smi, score = result.optimized_molecules[0]
+        reference_score = penalized_logp_score_func(reference_smi)
+        optimized_score = penalized_logp_score_func(optimized_smi)
 
         neptune.log_metric("id", smi_id)
-        neptune.log_metric("score", result.optimized_molecules[0][1])
+        neptune.log_metric("score", score)
         neptune.log_text("reference_smi", reference_smi)
-        neptune.log_text("optimized_smi", result.optimized_molecules[0][0])
+        neptune.log_metric("reference_score", reference_score)
+        neptune.log_text("optimized_smi", optimized_smi)
+        neptune.log_metric("optimized_score", optimized_score)

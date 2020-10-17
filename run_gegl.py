@@ -52,7 +52,7 @@ if __name__ == "__main__":
     neptune.append_tag(args.benchmark_id)
 
     # Load benchmark, i.e., the scoring function and its corresponding protocol
-    benchmark, scoring_num_list = load_benchmark(args.benchmark_id, dataset=args.dataset)
+    benchmark, scoring_num_list = load_benchmark(args.benchmark_id)
 
     # Load character directory used for mapping atoms to integers
     char_dict = SmilesCharDictionary(dataset=args.dataset, max_smi_len=args.max_smiles_length)
