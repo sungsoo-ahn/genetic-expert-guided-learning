@@ -19,6 +19,7 @@ from util.chemistry.benchmarks import (
     similarity_constrained_penalized_logp_cyclebasis,
     penalized_logp_atomrings,
     penalized_logp_cyclebasis,
+    TanimotoScoringFunction,
 )
 from util.smiles.char_dict import SmilesCharDictionary
 from util.smiles.dataset import load_dataset
@@ -126,6 +127,7 @@ if __name__ == "__main__":
         optimized_smi, score = result.optimized_molecules[0]
         reference_score = penalized_logp_score_func(reference_smi)
         optimized_score = penalized_logp_score_func(optimized_smi)
+        similarity = TanimotoScoringFunction(target=reference_smi, fp_type="ECFP4").score(optimized_smi)
 
         neptune.log_metric("id", smi_id)
         neptune.log_metric("score", score)
@@ -133,3 +135,4 @@ if __name__ == "__main__":
         neptune.log_metric("reference_score", reference_score)
         neptune.log_text("optimized_smi", optimized_smi)
         neptune.log_metric("optimized_score", optimized_score)
+        neptune.log_metric("similarity", similarity)
