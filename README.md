@@ -83,6 +83,7 @@ CUDA_VISIBLE_DEVICES=$GPU_DEVICE python run_gegl_constrained.py \
 --dataset zinc \
 --dataset_path ./resource/data/zinc/logp_800.txt \
 --apprentice_load_dir ./resource/checkpoint/zinc \
+--similarity_threshold 0.4 \
 --smi_id_min 0 --smi_id_max 800
 ```
 
