@@ -8,6 +8,7 @@ from model.genetic_operator.crossover import crossover
 
 import gc
 
+
 def reproduce(parent_a, parent_b, mutation_rate):
     parent_a, parent_b = Chem.MolFromSmiles(parent_a), Chem.MolFromSmiles(parent_b)
     new_child = crossover(parent_a, parent_b)
@@ -18,14 +19,17 @@ def reproduce(parent_a, parent_b, mutation_rate):
 
     return smis
 
+
 class GeneticOperatorHandler:
     def __init__(self, mutation_rate: float):
         self.mutation_rate = mutation_rate
 
     def query(self, query_size, mating_pool, pool):
-        smis = random.choices(mating_pool, k=query_size*2)
+        smis = random.choices(mating_pool, k=query_size * 2)
         smi0s, smi1s = smis[:query_size], smis[query_size:]
-        smis = pool(delayed(reproduce)(smi0, smi1, self.mutation_rate) for smi0, smi1 in zip(smi0s, smi1s))
+        smis = pool(
+            delayed(reproduce)(smi0, smi1, self.mutation_rate) for smi0, smi1 in zip(smi0s, smi1s)
+        )
         smis = list(filter(lambda smi: smi is not None, smis))
         gc.collect()
 

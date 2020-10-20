@@ -20,8 +20,7 @@ import neptune
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="",
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+        description="", formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument("--benchmark_id", type=int, default=12)
     parser.add_argument("--dataset", type=str, default="guacamol")

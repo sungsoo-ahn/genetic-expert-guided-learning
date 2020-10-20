@@ -35,7 +35,7 @@ from util.chemistry.standard_benchmarks import (
     qed_benchmark,
     isomers_c7h8n2o2,
     pioglitazone_mpo,
-    )
+)
 
 from guacamol.common_scoring_functions import (
     TanimotoScoringFunction,
@@ -83,6 +83,7 @@ class ThresholdedImprovementScoringFunction(MoleculewiseScoringFunction):
 
         return score
 
+
 LOGP_MEAN = 2.4570965532649507
 LOGP_STD = 1.4339810636722639
 SASCORE_MEAN = 3.0508333383104556
@@ -91,6 +92,7 @@ ATOMRING_CYCLESCORE_MEAN = 0.03805126763956079
 ATOMRING_CYCLESCORE_STD = 0.22377819597468795
 CYCLEBASIS_CYCLESCORE_MEAN = 0.048152237188108474
 CYCLEBASIS_CYCLESCORE_STD = 0.2860582871837183
+
 
 def _penalized_logp_atomrings(mol: Mol):
     log_p = Descriptors.MolLogP(mol)
@@ -106,6 +108,7 @@ def _penalized_logp_atomrings(mol: Mol):
 
     return log_p - sa_score - cycle_score
 
+
 def _penalized_logp_cyclebasis(mol: Mol):
     log_p = Descriptors.MolLogP(mol)
     sa_score = sascorer.calculateScore(mol)
@@ -120,12 +123,15 @@ def _penalized_logp_cyclebasis(mol: Mol):
 
     return log_p - sa_score - cycle_score
 
+
 def penalized_logp_atomrings():
     benchmark_name = "Penalized logP"
     objective = RdkitScoringFunction(descriptor=lambda mol: _penalized_logp_atomrings(mol))
     objective.corrupt_score = -1000.0
     specification = uniform_specification(1)
-    return GoalDirectedBenchmark(name=benchmark_name, objective=objective, contribution_specification=specification)
+    return GoalDirectedBenchmark(
+        name=benchmark_name, objective=objective, contribution_specification=specification
+    )
 
 
 def penalized_logp_cyclebasis():
@@ -133,7 +139,9 @@ def penalized_logp_cyclebasis():
     objective = RdkitScoringFunction(descriptor=lambda mol: _penalized_logp_cyclebasis(mol))
     objective.corrupt_score = -1000.0
     specification = uniform_specification(1)
-    return GoalDirectedBenchmark(name=benchmark_name, objective=objective, contribution_specification=specification)
+    return GoalDirectedBenchmark(
+        name=benchmark_name, objective=objective, contribution_specification=specification
+    )
 
 
 def similarity_constrained_penalized_logp_atomrings(smiles, name, threshold, fp_type="ECFP4"):
@@ -150,8 +158,11 @@ def similarity_constrained_penalized_logp_atomrings(smiles, name, threshold, fp_
     specification = uniform_specification(1)
 
     return GoalDirectedBenchmark(
-        name=benchmark_name, objective=constrained_objective, contribution_specification=specification
+        name=benchmark_name,
+        objective=constrained_objective,
+        contribution_specification=specification,
     )
+
 
 def similarity_constrained_penalized_logp_cyclebasis(smiles, name, threshold, fp_type="ECFP4"):
     benchmark_name = f"{name} {threshold:.1f} Similarity Constrained Penalized logP"
@@ -167,8 +178,11 @@ def similarity_constrained_penalized_logp_cyclebasis(smiles, name, threshold, fp
     specification = uniform_specification(1)
 
     return GoalDirectedBenchmark(
-        name=benchmark_name, objective=constrained_objective, contribution_specification=specification
+        name=benchmark_name,
+        objective=constrained_objective,
+        contribution_specification=specification,
     )
+
 
 def load_benchmark(benchmark_id):
     benchmark = {
@@ -199,7 +213,12 @@ def load_benchmark(benchmark_id):
             fp_type="ECFP4",
             threshold=0.75,
         ),
-        4: similarity(smiles="CC(C)(C)NCC(O)c1ccc(O)c(CO)c1", name="Albuterol", fp_type="FCFP4", threshold=0.75),
+        4: similarity(
+            smiles="CC(C)(C)NCC(O)c1ccc(O)c(CO)c1",
+            name="Albuterol",
+            fp_type="FCFP4",
+            threshold=0.75,
+        ),
         5: similarity(
             smiles="COc1ccc2[C@H]3CC[C@@]4(C)[C@@H](CC[C@@]4(O)C#C)[C@@H]3CCc2c1",
             name="Mestranol",
@@ -231,7 +250,29 @@ def load_benchmark(benchmark_id):
         28: penalized_logp_cyclebasis(),
     }.get(benchmark_id)
 
-    if benchmark_id in [3, 4, 5, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 26]:
+    if benchmark_id in [
+        3,
+        4,
+        5,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        26,
+    ]:
         scoring_num_list = [1, 10, 100]
     elif benchmark_id in [6]:
         scoring_num_list = [159]

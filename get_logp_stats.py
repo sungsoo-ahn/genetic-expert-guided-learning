@@ -6,6 +6,7 @@ import networkx as nx
 from rdkit import Chem
 from rdkit.Chem import Descriptors
 from rdkit.Chem import RDConfig
+
 sys.path.append(os.path.join(RDConfig.RDContribDir, "SA_Score"))
 import sascorer
 
@@ -38,5 +39,6 @@ if __name__ == "__main__":
     print(f"LogP stats: {np.mean(log_ps)}, {np.std(log_ps)}")
     print(f"SA stats: {np.mean(sa_scores)}, {np.std(sa_scores)}")
     print(f"AtomRing stats: {np.mean(atomring_cycle_scores)}, {np.std(atomring_cycle_scores)}")
-    print(f"CycleBasis stats: {np.mean(cyclebasis_cycle_scores)}, {np.std(cyclebasis_cycle_scores)}")
-
+    print(
+        f"CycleBasis stats: {np.mean(cyclebasis_cycle_scores)}, {np.std(cyclebasis_cycle_scores)}"
+    )

@@ -3,14 +3,17 @@ import random
 import numpy as np
 from rdkit import Chem, rdBase
 from rdkit.Chem import AllChem
-rdBase.DisableLog('rdApp.error')
+
+rdBase.DisableLog("rdApp.error")
 
 
 def cut(mol):
-    if not mol.HasSubstructMatch(Chem.MolFromSmarts('[*]-;!@[*]')):
+    if not mol.HasSubstructMatch(Chem.MolFromSmarts("[*]-;!@[*]")):
         return None
 
-    bis = random.choice(mol.GetSubstructMatches(Chem.MolFromSmarts('[*]-;!@[*]')))  # single bond not in ring
+    bis = random.choice(
+        mol.GetSubstructMatches(Chem.MolFromSmarts("[*]-;!@[*]"))
+    )  # single bond not in ring
 
     bs = [mol.GetBondBetweenAtoms(bis[0], bis[1]).GetIdx()]
 
@@ -28,15 +31,21 @@ def cut_ring(mol):
 
     for i in range(10):
         if random.random() < 0.5:
-            if not mol.HasSubstructMatch(Chem.MolFromSmarts('[R]@[R]@[R]@[R]')):
+            if not mol.HasSubstructMatch(Chem.MolFromSmarts("[R]@[R]@[R]@[R]")):
                 return None
-            bis = random.choice(mol.GetSubstructMatches(Chem.MolFromSmarts('[R]@[R]@[R]@[R]')))
-            bis = ((bis[0], bis[1]), (bis[2], bis[3]),)
+            bis = random.choice(mol.GetSubstructMatches(Chem.MolFromSmarts("[R]@[R]@[R]@[R]")))
+            bis = (
+                (bis[0], bis[1]),
+                (bis[2], bis[3]),
+            )
         else:
-            if not mol.HasSubstructMatch(Chem.MolFromSmarts('[R]@[R;!D2]@[R]')):
+            if not mol.HasSubstructMatch(Chem.MolFromSmarts("[R]@[R;!D2]@[R]")):
                 return None
-            bis = random.choice(mol.GetSubstructMatches(Chem.MolFromSmarts('[R]@[R;!D2]@[R]')))
-            bis = ((bis[0], bis[1]), (bis[1], bis[2]),)
+            bis = random.choice(mol.GetSubstructMatches(Chem.MolFromSmarts("[R]@[R;!D2]@[R]")))
+            bis = (
+                (bis[0], bis[1]),
+                (bis[1], bis[2]),
+            )
 
         bs = [mol.GetBondBetweenAtoms(x, y).GetIdx() for x, y in bis]
 
@@ -53,16 +62,16 @@ def cut_ring(mol):
 
 
 def ring_OK(mol):
-    if not mol.HasSubstructMatch(Chem.MolFromSmarts('[R]')):
+    if not mol.HasSubstructMatch(Chem.MolFromSmarts("[R]")):
         return True
 
-    ring_allene = mol.HasSubstructMatch(Chem.MolFromSmarts('[R]=[R]=[R]'))
+    ring_allene = mol.HasSubstructMatch(Chem.MolFromSmarts("[R]=[R]=[R]"))
 
     cycle_list = mol.GetRingInfo().AtomRings()
     max_cycle_length = max([len(j) for j in cycle_list])
     macro_cycle = max_cycle_length > 6
 
-    double_bond_in_small_ring = mol.HasSubstructMatch(Chem.MolFromSmarts('[r3,r4]=[r3,r4]'))
+    double_bond_in_small_ring = mol.HasSubstructMatch(Chem.MolFromSmarts("[r3,r4]=[r3,r4]"))
 
     return not ring_allene and not macro_cycle and not double_bond_in_small_ring
 
@@ -85,12 +94,12 @@ def mol_ok(mol):
 
 
 def crossover_ring(parent_A, parent_B):
-    ring_smarts = Chem.MolFromSmarts('[R]')
+    ring_smarts = Chem.MolFromSmarts("[R]")
     if not parent_A.HasSubstructMatch(ring_smarts) and not parent_B.HasSubstructMatch(ring_smarts):
         return None
 
-    rxn_smarts1 = ['[*:1]~[1*].[1*]~[*:2]>>[*:1]-[*:2]', '[*:1]~[1*].[1*]~[*:2]>>[*:1]=[*:2]']
-    rxn_smarts2 = ['([*:1]~[1*].[1*]~[*:2])>>[*:1]-[*:2]', '([*:1]~[1*].[1*]~[*:2])>>[*:1]=[*:2]']
+    rxn_smarts1 = ["[*:1]~[1*].[1*]~[*:2]>>[*:1]-[*:2]", "[*:1]~[1*].[1*]~[*:2]>>[*:1]=[*:2]"]
+    rxn_smarts2 = ["([*:1]~[1*].[1*]~[*:2])>>[*:1]-[*:2]", "([*:1]~[1*].[1*]~[*:2])>>[*:1]=[*:2]"]
 
     for i in range(10):
         fragments_A = cut_ring(parent_A)
@@ -134,7 +143,7 @@ def crossover_non_ring(parent_A, parent_B):
         fragments_B = cut(parent_B)
         if fragments_A is None or fragments_B is None:
             return None
-        rxn = AllChem.ReactionFromSmarts('[*:1]-[1*].[1*]-[*:2]>>[*:1]-[*:2]')
+        rxn = AllChem.ReactionFromSmarts("[*:1]-[1*].[1*]-[*:2]>>[*:1]-[*:2]")
         new_mol_trial = []
         for fa in fragments_A:
             for fb in fragments_B:

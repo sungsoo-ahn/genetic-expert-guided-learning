@@ -13,7 +13,9 @@ from util.smiles.char_dict import SmilesCharDictionary
 import neptune
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="pretrain", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description="pretrain", formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
     parser.add_argument("--dataset", type=str, default="zinc_daga")
     parser.add_argument("--dataset_path", type=str, default="./resource/data/zinc_daga/full.txt")
     parser.add_argument("--max_smiles_length", type=int, default=80)
@@ -57,7 +59,7 @@ if __name__ == "__main__":
     optimizer = Adam(params=generator.parameters(), lr=args.learning_rate)
     generator_handler = SmilesGeneratorHandler(
         model=generator, optimizer=optimizer, char_dict=char_dict, max_sampling_batch_size=0
-        )
+    )
 
     # Prepare trainer
     trainer = PreTrainer(
@@ -68,6 +70,6 @@ if __name__ == "__main__":
         batch_size=args.batch_size,
         save_dir=args.save_dir,
         device=device,
-        )
+    )
 
     trainer.train()

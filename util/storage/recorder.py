@@ -69,7 +69,9 @@ class Recorder:
             if len(filtered_new_elems) > self.max_size:
                 filtered_new_elems = sorted(filtered_new_elems, reverse=True)[: self.max_size]
 
-            filtered_new_elems = list(filter(lambda elem: self.rd_filter(elem.smi) > 0.5, filtered_new_elems))
+            filtered_new_elems = list(
+                filter(lambda elem: self.rd_filter(elem.smi) > 0.5, filtered_new_elems)
+            )
 
             self.filtered_elems.extend(filtered_new_elems)
 
@@ -78,7 +80,8 @@ class Recorder:
 
     def full(self):
         return len(self.elems) == self.max_size and (
-            (not self.record_filtered) or (self.record_filtered and len(self.filtered_elems) == self.max_size)
+            (not self.record_filtered)
+            or (self.record_filtered and len(self.filtered_elems) == self.max_size)
         )
 
     def evaluate(self, rd_filtered):
@@ -91,7 +94,9 @@ class Recorder:
 
         evaluation_score = 0.0
         for scoring_num in self.scoring_num_list:
-            evaluation_score += evaluation_elemwise_scores[:scoring_num].mean() / len(self.scoring_num_list)
+            evaluation_score += evaluation_elemwise_scores[:scoring_num].mean() / len(
+                self.scoring_num_list
+            )
 
         return evaluation_score
 

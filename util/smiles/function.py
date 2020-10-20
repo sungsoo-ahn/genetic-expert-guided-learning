@@ -8,11 +8,20 @@ from joblib import Parallel, delayed
 
 from tqdm import tqdm
 
+
 def process_smis(
-    smis, scoring_function, pool, canonicalization, duplicate_removal, scoring_parallelization, max_smi_len=100
+    smis,
+    scoring_function,
+    pool,
+    canonicalization,
+    duplicate_removal,
+    scoring_parallelization,
+    max_smi_len=100,
 ):
     if canonicalization:
-        smis = pool(delayed(lambda smi: canonicalize(smi, include_stereocenters=False))(smi) for smi in smis)
+        smis = pool(
+            delayed(lambda smi: canonicalize(smi, include_stereocenters=False))(smi) for smi in smis
+        )
         smis = list(filter(lambda smi: (smi is not None) and (len(smi) < max_smi_len), smis))
 
     if duplicate_removal:
@@ -50,6 +59,7 @@ def smis_to_actions(char_dict, smis):
         seq_lengths[i] = len(enc_smi)
 
     return actions, seq_lengths
+
 
 def filter_by_score(smis, scores, score_thr):
     filtered_smis_and_scores = list(filter(lambda elem: elem[1] > score_thr, zip(smis, scores)))

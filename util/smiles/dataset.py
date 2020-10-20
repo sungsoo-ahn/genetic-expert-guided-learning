@@ -5,6 +5,7 @@ from tqdm import tqdm
 import numpy as np
 from util.smiles.char_dict import SmilesCharDictionary
 
+
 def load_dataset(char_dict, smi_path):
     processed_dataset_path = str(Path(smi_path).with_suffix("")) + "_processed.smiles"
     if False and os.path.exists(processed_dataset_path):

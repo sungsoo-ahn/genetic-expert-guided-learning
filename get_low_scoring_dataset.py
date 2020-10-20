@@ -7,8 +7,7 @@ from util.smiles.char_dict import SmilesCharDictionary
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="",
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+        description="", formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     parser.add_argument("--dataset", type=str, default="zinc")
     parser.add_argument("--top_k", type=int, default=800)
@@ -28,13 +27,10 @@ if __name__ == "__main__":
         score = benchmark.wrapped_objective.score(smi)
         smi2score[smi] = score
 
-    low_scoring_smis = sorted(dataset, key=lambda smi: smi2score[smi])[:args.top_k]
+    low_scoring_smis = sorted(dataset, key=lambda smi: smi2score[smi])[: args.top_k]
 
     for smi in low_scoring_smis:
         print(benchmark.wrapped_objective.score(smi))
 
     with open(args.output_path, "w") as f:
         f.write("\n".join(low_scoring_smis) + "\n")
-
-
-

@@ -6,14 +6,17 @@ from rdkit.Chem.Descriptors import MolWt, MolLogP, NumHDonors, NumHAcceptors, TP
 RULES_FILENAME = "./resource/rd_filter/rules.json"
 ALERT_FILENAME = "./resource/rd_filter/alert_collection.csv"
 
-class RDFilter():
+
+class RDFilter:
     def __init__(self):
         with open(RULES_FILENAME) as json_file:
             self.rule_dict = json.load(json_file)
 
         rule_list = [
-            x.replace("Rule_", "") for x in self.rule_dict.keys() if x.startswith("Rule") and self.rule_dict[x]
-            ]
+            x.replace("Rule_", "")
+            for x in self.rule_dict.keys()
+            if x.startswith("Rule") and self.rule_dict[x]
+        ]
 
         rule_df = pd.read_csv(ALERT_FILENAME).dropna()
         rule_df = rule_df[rule_df.rule_set_name.isin(rule_list)]

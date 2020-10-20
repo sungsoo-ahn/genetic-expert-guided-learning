@@ -31,7 +31,9 @@ import sys
 sys.stdout = None
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser = argparse.ArgumentParser(
+        description="", formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
     parser.add_argument("--smi_id_min", type=int, default=0)
     parser.add_argument("--smi_id_max", type=int, default=800)
     parser.add_argument("--dataset", type=str, default="zinc")
@@ -62,7 +64,9 @@ if __name__ == "__main__":
 
     neptune.init(project_qualified_name="sungsoo.ahn/deep-molecular-optimization")
     experiment = neptune.create_experiment(name=args.algorithm, params=vars(args))
-    neptune.append_tag(f"{args.smi_id_min:03d}_{args.smi_id_max:03d}_{args.similarity_threshold}".replace(".", ""))
+    neptune.append_tag(
+        f"{args.smi_id_min:03d}_{args.smi_id_max:03d}_{args.similarity_threshold}".replace(".", "")
+    )
 
     char_dict = SmilesCharDictionary(dataset=args.dataset, max_smi_len=args.max_smiles_length)
     dataset = load_dataset(char_dict=char_dict, smi_path=args.dataset_path)
@@ -73,7 +77,6 @@ if __name__ == "__main__":
     else:
         similarity_constrained_penalized_logp = similarity_constrained_penalized_logp_cyclebasis
         penalized_logp_score_func = penalized_logp_cyclebasis().wrapped_objective.score
-
 
     for smi_id in range(args.smi_id_min, args.smi_id_max):
         print(f"ID: {smi_id}")
@@ -127,7 +130,9 @@ if __name__ == "__main__":
         optimized_smi, score = result.optimized_molecules[0]
         reference_score = penalized_logp_score_func(reference_smi)
         optimized_score = penalized_logp_score_func(optimized_smi)
-        similarity = TanimotoScoringFunction(target=reference_smi, fp_type="ECFP4").score(optimized_smi)
+        similarity = TanimotoScoringFunction(target=reference_smi, fp_type="ECFP4").score(
+            optimized_smi
+        )
 
         neptune.log_metric("id", smi_id)
         neptune.log_text("reference_smi", reference_smi)

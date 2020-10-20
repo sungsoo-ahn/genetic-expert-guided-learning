@@ -10,6 +10,7 @@ from guacamol.goal_directed_generator import GoalDirectedGenerator
 
 import neptune
 
+
 class GeneticExpertGuidedLearningGenerator(GoalDirectedGenerator):
     def __init__(self, trainer, recorder, num_steps, device, scoring_num_list, num_jobs):
         self.trainer = trainer
@@ -25,7 +26,7 @@ class GeneticExpertGuidedLearningGenerator(GoalDirectedGenerator):
         for step in tqdm(range(self.num_steps)):
             smis, scores = self.trainer.step(
                 scoring_function=scoring_function, device=self.device, pool=self.pool
-                )
+            )
 
             self.recorder.add_list(smis=smis, scores=scores)
             self.recorder.log()

@@ -20,7 +20,9 @@ class SmilesGenerator(nn.Module):
         self.encoder = nn.Embedding(input_size, hidden_size)
         self.decoder = nn.Linear(hidden_size, output_size)
 
-        self.lstm = nn.LSTM(hidden_size, hidden_size, batch_first=True, num_layers=n_layers, dropout=lstm_dropout)
+        self.lstm = nn.LSTM(
+            hidden_size, hidden_size, batch_first=True, num_layers=n_layers, dropout=lstm_dropout
+        )
         self.init_weights()
 
     def init_weights(self):
@@ -101,12 +103,14 @@ class SmilesGeneratorHandler:
 
     def sample(self, num_samples, device):
         action, log_prob, seq_length = self.sample_action(num_samples=num_samples, device=device)
-        smiles = self.char_dict.matrix_to_smiles(action, seq_length-1)
+        smiles = self.char_dict.matrix_to_smiles(action, seq_length - 1)
 
         return smiles, action, log_prob, seq_length
 
     def sample_action(self, num_samples, device):
-        number_batches = (num_samples + self.max_sampling_batch_size - 1) // self.max_sampling_batch_size
+        number_batches = (
+            num_samples + self.max_sampling_batch_size - 1
+        ) // self.max_sampling_batch_size
         remaining_samples = num_samples
 
         action = torch.LongTensor(num_samples, self.max_seq_length).to(device)
@@ -119,7 +123,9 @@ class SmilesGeneratorHandler:
             batch_size = min(self.max_sampling_batch_size, remaining_samples)
             batch_end = batch_start + batch_size
 
-            action_batch, log_prob_batch, seq_length_batch = self._sample_action_batch(batch_size, device)
+            action_batch, log_prob_batch, seq_length_batch = self._sample_action_batch(
+                batch_size, device
+            )
             action[batch_start:batch_end, :] = action_batch
             log_prob[batch_start:batch_end, :] = log_prob_batch
             seq_length[batch_start:batch_end] = seq_length_batch
@@ -152,12 +158,14 @@ class SmilesGeneratorHandler:
         output = output.view(batch_size * batch_seq_length, -1)
 
         log_probs = torch.log_softmax(output, dim=1)
-        log_target_probs = log_probs.gather(dim=1, index=target_actions.reshape(-1, 1)).squeeze(dim=1)
+        log_target_probs = log_probs.gather(dim=1, index=target_actions.reshape(-1, 1)).squeeze(
+            dim=1
+        )
         log_target_probs = log_target_probs.view(batch_size, batch_seq_length).mean(dim=1)
         loss = -(weights * log_target_probs).mean()
 
         if self.entropy_factor > 0.0:
-            entropy = - torch.sum(torch.exp(log_probs) * log_probs, dim=1).mean()
+            entropy = -torch.sum(torch.exp(log_probs) * log_probs, dim=1).mean()
             loss -= self.entropy_factor * entropy
 
         self.model.zero_grad()
@@ -172,7 +180,9 @@ class SmilesGeneratorHandler:
         actions_seq_length = actions.size(1)
         log_probs = torch.FloatTensor(num_samples, actions_seq_length).to(device)
 
-        number_batches = (num_samples + self.max_sampling_batch_size - 1) // self.max_sampling_batch_size
+        number_batches = (
+            num_samples + self.max_sampling_batch_size - 1
+        ) // self.max_sampling_batch_size
         remaining_samples = num_samples
         batch_start = 0
         for i in range(number_batches):
@@ -203,7 +213,9 @@ class SmilesGeneratorHandler:
         output, _ = self.model(input_actions, hidden=None)
         output = output.view(batch_size * actions_seq_length, -1)
         log_probs = torch.log_softmax(output, dim=1)
-        log_target_probs = log_probs.gather(dim=1, index=target_actions.reshape(-1, 1)).squeeze(dim=1)
+        log_target_probs = log_probs.gather(dim=1, index=target_actions.reshape(-1, 1)).squeeze(
+            dim=1
+        )
         log_target_probs = log_target_probs.view(batch_size, self.max_seq_length)
 
         mask = torch.arange(actions_seq_length).expand(len(seq_lengths), actions_seq_length) > (

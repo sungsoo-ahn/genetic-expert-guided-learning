@@ -2,6 +2,7 @@ from functools import total_ordering
 import numpy as np
 import random
 
+
 @total_ordering
 class StorageElement:
     def __init__(self, smi, score):
@@ -17,8 +18,10 @@ class StorageElement:
     def __hash__(self):
         return hash(self.smi)
 
+
 def unravel_elems(elems):
     return tuple(map(list, zip(*[(elem.smi, elem.score) for elem in elems])))
+
 
 class MaxRewardPriorityQueue:
     def __init__(self):
@@ -28,9 +31,7 @@ class MaxRewardPriorityQueue:
         return len(self.elems)
 
     def add_list(self, smis, scores):
-        new_elems = [
-            StorageElement(smi=smi, score=score) for smi, score in zip(smis, scores)
-        ]
+        new_elems = [StorageElement(smi=smi, score=score) for smi, score in zip(smis, scores)]
         self.elems.extend(new_elems)
         self.elems = list(set(self.elems))
 
@@ -52,5 +53,3 @@ class MaxRewardPriorityQueue:
     def sample_batch(self, batch_size):
         sampled_elems = random.choices(population=self.elems, k=batch_size)
         return unravel_elems(sampled_elems)
-
-

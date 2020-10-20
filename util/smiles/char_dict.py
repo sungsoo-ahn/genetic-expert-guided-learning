@@ -4,6 +4,7 @@ PAD = " "
 BEGIN = "Q"
 END = "\n"
 
+
 def load_forbidden_symbols(dataset):
     if dataset == "guacamol":
         forbidden_symbols = {
@@ -51,6 +52,7 @@ def load_forbidden_symbols(dataset):
         forbidden_symbols = set()
 
     return forbidden_symbols
+
 
 def load_char_idx(dataset):
     if dataset == "guacamol":
@@ -150,6 +152,7 @@ def load_char_idx(dataset):
 
     return char_idx
 
+
 def load_encode_dict(dataset):
     if dataset == "guacamol":
         encode_dict = {"Br": "Y", "Cl": "X", "Si": "A", "Se": "Z", "@@": "R", "se": "E"}
@@ -158,9 +161,10 @@ def load_encode_dict(dataset):
 
     return encode_dict
 
+
 class SmilesCharDictionary(object):
     def __init__(self, dataset, max_smi_len) -> None:
-        self.max_smi_len=max_smi_len
+        self.max_smi_len = max_smi_len
 
         self.forbidden_symbols = load_forbidden_symbols(dataset)
 
@@ -222,7 +226,9 @@ class SmilesCharDictionary(object):
 
     def matrix_to_smiles(self, array, seq_lengths):
         array = array.tolist()
-        smis = list(map(lambda item: self.vector_to_smiles(item[0], item[1]), zip(array, seq_lengths)))
+        smis = list(
+            map(lambda item: self.vector_to_smiles(item[0], item[1]), zip(array, seq_lengths))
+        )
         return smis
 
     def vector_to_smiles(self, vec, seq_length):
@@ -230,5 +236,3 @@ class SmilesCharDictionary(object):
         smi = "".join(chars)
         smi = self.decode(smi)
         return smi
-
-
